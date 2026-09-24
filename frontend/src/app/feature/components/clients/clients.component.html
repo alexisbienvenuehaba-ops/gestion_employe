@@ -1,0 +1,90 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header class="d-flex justify-content-between align-items-center">
+        <strong>Clients</strong>
+        <button cButton color="primary" (click)="openAddForm()">
+          <svg cIcon name="cilPlus" class="me-1"></svg>
+          Ajouter un client
+        </button>
+      </c-card-header>
+      <c-card-body>
+        @if (clients().length === 0) {
+        <p class="text-body-secondary mb-0">
+          Aucun client pour l'instant. Clique sur "Ajouter un client" pour commencer.
+        </p>
+        } @else {
+        <table cTable hover>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Prenom</th>
+              <th>Email</th>
+              <th>Téléphone</th>
+              <th>Entreprise</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (client of clients(); track client.id) {
+        <tr>
+          <td>{{ client.id }}</td>
+          <td>{{ client.nom }}</td>
+          <td>{{ client.prenom }}</td>
+          <td>{{ client.email }}</td>
+          <td>{{ client.telephone || '—' }}</td>
+          <td>{{ client.entreprise || '—' }}</td>
+          <td class="text-end">
+            <button cButton color="info" variant="ghost" size="sm" class="me-1"
+                    (click)="openEditForm(client)" aria-label="Modifier">
+              <svg cIcon name="cilPencil"></svg>
+            </button>
+            <button cButton color="danger" variant="ghost" size="sm"
+                    (click)="remove(client)" aria-label="Supprimer">
+              <svg cIcon name="cilTrash"></svg>
+            </button>
+          </td>
+        </tr>
+        }
+        </tbody>
+      </table>
+        }
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<c-modal [visible]="showModal()" (visibleChange)="!$event && closeForm()">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() !== null ? 'Modifier le client' : 'Ajouter un client' }}</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form">
+      <div class="mb-3">
+        <label cLabel for="nom">Nom *</label>
+        <input cFormControl id="nom" formControlName="nom" type="text" />
+      </div>
+      <div class="mb-3">
+        <label cLabel for="nom">Prenom *</label>
+        <input cFormControl id="prenom" formControlName="prenom" type="text" />
+      </div>
+      <div class="mb-3">
+        <label cLabel for="email">Email *</label>
+        <input cFormControl id="email" formControlName="email" type="email" />
+      </div>
+      <div class="mb-3">
+        <label cLabel for="telephone">Téléphone</label>
+        <input cFormControl id="telephone" formControlName="telephone" type="text" />
+      </div>
+      <div class="mb-3">
+        <label cLabel for="entreprise">Entreprise</label>
+        <input cFormControl id="entreprise" formControlName="entreprise" type="text" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="closeForm()">Annuler</button>
+    <button cButton color="primary" (click)="save()">Enregistrer</button>
+  </c-modal-footer>
+</c-modal>
