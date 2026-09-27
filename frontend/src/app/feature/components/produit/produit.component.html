@@ -1,0 +1,91 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header class="d-flex justify-content-between align-items-center">
+        <strong>Produits</strong>
+        <button cButton color="primary" (click)="openAddForm()">
+          <svg cIcon name="cilPlus" class="me-1"></svg>
+          Ajouter un Produit
+        </button>
+      </c-card-header>
+      <c-card-body>
+        @if (produits().length === 0) {
+        <p class="text-body-secondary mb-0">
+          Aucun produit pour l'instant. Clique sur "Ajouter un Produit" pour commencer.
+        </p>
+        } @else {
+        <table cTable hover>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Quantité en stock</th>
+              <th>Prix</th>
+              <th>Fournisseur</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (produit of produits(); track produit.idProduit) {
+        <tr>
+          <td>{{ produit.idProduit }}</td>
+          <td>{{ produit.nom }}</td>
+          <td>{{ produit.quantiteStock }}</td>
+          <td>{{ produit.prix }}</td>
+          <td>{{ produit.nomFournisseur || '—' }}</td>
+          <td class="text-end">
+            <button cButton color="info" variant="ghost" size="sm" class="me-1"
+                    (click)="openEditForm(produit)" aria-label="Modifier">
+              <svg cIcon name="cilPencil"></svg>
+            </button>
+            <button cButton color="danger" variant="ghost" size="sm"
+                    (click)="remove(produit)" aria-label="Supprimer">
+              <svg cIcon name="cilTrash"></svg>
+            </button>
+          </td>
+        </tr>
+        }
+        </tbody>
+      </table>
+        }
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<c-modal [visible]="showModal()" (visibleChange)="!$event && closeForm()">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() !== null ? 'Modifier produit' : 'Ajouter un produit' }}</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form">
+      <div class="mb-3">
+        <label cLabel for="nom">Nom *</label>
+        <input cFormControl id="nom" formControlName="nom" type="text" />
+      </div>
+      <div class="mb-3">
+        <label cLabel for="quantiteStock">Quantité en stock *</label>
+        <input cFormControl id="quantiteStock" formControlName="quantiteStock" type="number" min="0" />
+      </div>
+      <div class="mb-3">
+        <label cLabel for="prix">Prix *</label>
+        <input cFormControl id="prix" formControlName="prix" type="number" min="0" step="0.01" />
+      </div>
+      <div class="mb-3">
+        <label cLabel for="idFournisseur">Fournisseur *</label>
+        <select cSelect id="idFournisseur" formControlName="idFournisseur">
+          <option [ngValue]="null" disabled>Choisir un fournisseur</option>
+          @for (fournisseur of fournisseurs(); track fournisseur.idFournisseur) {
+          <option [ngValue]="fournisseur.idFournisseur">
+          {{ fournisseur.nom }} {{ fournisseur.prenom }}
+          </option>
+          }
+        </select>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="closeForm()">Annuler</button>
+    <button cButton color="primary" (click)="save()">Enregistrer</button>
+  </c-modal-footer>
+</c-modal>

@@ -32,6 +32,20 @@ export const routes: Routes = [
         }
       },
       {
+        path: 'fournisseur',
+        loadComponent: () => import('./feature/components/fournisseur/fournisseur.component').then(m => m.FournisseurComponent),
+        data: {
+          title: 'Fournisseurs'
+        }
+      },
+      {
+        path: 'produit',
+        loadComponent: () => import('./feature/components/produit/produit.component').then(m => m.ProduitComponent),
+        data: {
+          title: 'Produits'
+        }
+      },
+      {
         path: 'components',
         loadChildren: () => import('./views/components/routes').then((m) => m.routes)
       },

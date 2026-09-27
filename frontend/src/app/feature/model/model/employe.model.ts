@@ -1,8 +1,8 @@
 export interface employes {
-  id: number;
+  idEmploye: number;
   nom: string;
-  prenom:string;
+  prenom: string;
   email: string;
   telephone: string;
-  poste: string;
+  poste?: string;
 }

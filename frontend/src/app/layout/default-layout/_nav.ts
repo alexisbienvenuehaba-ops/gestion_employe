@@ -20,6 +20,17 @@ export const navItems: INavData[] = [
     url: '/employes',
     iconComponent: { name: 'cil-people' }
   },
+  {
+    name: 'Fournisseurs',
+    url: '/fournisseur',
+    iconComponent: { name: 'cil-people' }
+  },
+
+  {
+    name: 'Produits',
+    url: '/produit',
+    iconComponent: { name: 'cil-people' }
+  },
 
   {
     title: true,

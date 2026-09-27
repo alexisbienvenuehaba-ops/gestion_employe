@@ -18,9 +18,8 @@ import {
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
 
-
 import { EmployeService } from '../../service/services/employe.service';
-import {employes} from '../../model/model/employe.model';
+import { employes } from '../../model/model/employe.model';
 
 @Component({
   selector: 'app-employe',
@@ -44,12 +43,12 @@ import {employes} from '../../model/model/employe.model';
     IconDirective
   ],
   templateUrl: 'employe.component.html',
-  styleUrl:'./employe.component.scss'
+  styleUrl: './employe.component.scss'
 })
 export class EmployeComponent {
 
   private readonly fb = new FormBuilder();
-  private readonly employeService : EmployeService;
+  private readonly employeService: EmployeService;
 
   readonly employes = computed(() => this.employeService.employes());
   readonly showModal = signal(false);
@@ -57,7 +56,7 @@ export class EmployeComponent {
 
   readonly form = this.fb.group({
     nom: ['', Validators.required],
-    prenom:['',Validators.required],
+    prenom: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     telephone: [''],
     poste: ['']
@@ -72,14 +71,15 @@ export class EmployeComponent {
     this.form.reset();
     this.showModal.set(true);
   }
-  openEditForm(employes: employes): void {
-    this.editingId.set(employes.id);
+
+  openEditForm(employe: employes): void {
+    this.editingId.set(employe.idEmploye);
     this.form.setValue({
-      nom: employes.nom,
-      prenom: employes.prenom,
-      email: employes.email,
-      telephone: employes.telephone,
-      poste: employes.poste ?? ''
+      nom: employe.nom,
+      prenom: employe.prenom,
+      email: employe.email,
+      telephone: employe.telephone,
+      poste: employe.poste ?? ''
     });
     this.showModal.set(true);
   }
@@ -87,6 +87,7 @@ export class EmployeComponent {
   closeForm(): void {
     this.showModal.set(false);
   }
+
   save(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
@@ -111,11 +112,10 @@ export class EmployeComponent {
     this.closeForm();
   }
 
-  remove(employes: employes): void {
-    const confirmed = confirm(`Supprimer le l\'employe "${employes.nom}" ?`);
+  remove(employe: employes): void {
+    const confirmed = confirm(`Supprimer l'employé "${employe.nom}" ?`);
     if (confirmed) {
-      this.employeService.delete(employes.id);
+      this.employeService.delete(employe.idEmploye);
     }
   }
-
 }

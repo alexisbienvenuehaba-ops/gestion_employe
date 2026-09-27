@@ -27,21 +27,21 @@
             </tr>
           </thead>
           <tbody>
-            @for (employes of employes(); track employes.id) {
+            @for (employe of employes(); track employe.idEmploye) {
         <tr>
-          <td>{{ employes.id }}</td>
-          <td>{{ employes.nom }}</td>
-          <td>{{ employes.prenom }}</td>
-          <td>{{ employes.email }}</td>
-          <td>{{ employes.telephone || '—' }}</td>
-          <td>{{ employes.poste || '—' }}</td>
+          <td>{{ employe.idEmploye }}</td>
+          <td>{{ employe.nom }}</td>
+          <td>{{ employe.prenom }}</td>
+          <td>{{ employe.email }}</td>
+          <td>{{ employe.telephone || '—' }}</td>
+          <td>{{ employe.poste || '—' }}</td>
           <td class="text-end">
             <button cButton color="info" variant="ghost" size="sm" class="me-1"
-                    (click)="openEditForm(employes)" aria-label="Modifier">
+                    (click)="openEditForm(employe)" aria-label="Modifier">
               <svg cIcon name="cilPencil"></svg>
             </button>
             <button cButton color="danger" variant="ghost" size="sm"
-                    (click)="remove(employes)" aria-label="Supprimer">
+                    (click)="remove(employe)" aria-label="Supprimer">
               <svg cIcon name="cilTrash"></svg>
             </button>
           </td>
@@ -57,7 +57,7 @@
 
 <c-modal [visible]="showModal()" (visibleChange)="!$event && closeForm()">
   <c-modal-header>
-    <h5 cModalTitle>{{ editingId() !== null ? 'Modifier employe' : 'Ajouter un employé' }}</h5>
+    <h5 cModalTitle>{{ editingId() !== null ? 'Modifier employé' : 'Ajouter un employé' }}</h5>
   </c-modal-header>
   <c-modal-body>
     <form [formGroup]="form">
@@ -66,7 +66,7 @@
         <input cFormControl id="nom" formControlName="nom" type="text" />
       </div>
       <div class="mb-3">
-        <label cLabel for="nom">Prenom *</label>
+        <label cLabel for="prenom">Prenom *</label>
         <input cFormControl id="prenom" formControlName="prenom" type="text" />
       </div>
       <div class="mb-3">

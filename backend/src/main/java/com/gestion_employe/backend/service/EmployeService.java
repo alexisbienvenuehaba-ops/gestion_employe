@@ -1,8 +1,6 @@
 package com.gestion_employe.backend.service;
 
-import com.gestion_employe.backend.dto.Request.ClientRequestDto;
 import com.gestion_employe.backend.dto.Request.EmployeRequestDto;
-import com.gestion_employe.backend.dto.Response.ClientResponseDto;
 import com.gestion_employe.backend.dto.Response.EmployeResponseDto;
 
 import java.util.List;

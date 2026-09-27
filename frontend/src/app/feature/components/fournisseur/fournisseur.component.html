@@ -1,0 +1,78 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+      <c-card-header class="d-flex justify-content-between align-items-center">
+        <strong>Fournisseurs</strong>
+        <button cButton color="primary" (click)="openAddForm()">
+          <svg cIcon name="cilPlus" class="me-1"></svg>
+          Ajouter un Fournisseur
+        </button>
+      </c-card-header>
+      <c-card-body>
+        @if (fournisseur().length === 0) {
+        <p class="text-body-secondary mb-0">
+          Aucun Fournisseur pour l'instant. Clique sur "Ajouter un Fournisseur" pour commencer.
+        </p>
+        } @else {
+        <table cTable hover>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nom</th>
+              <th>Prenom</th>
+              <th>Téléphone</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (fournisseur of fournisseur(); track fournisseur.idFournisseur) {
+        <tr>
+          <td>{{ fournisseur.idFournisseur }}</td>
+          <td>{{ fournisseur.nom }}</td>
+          <td>{{ fournisseur.prenom }}</td>
+          <td>{{ fournisseur.telephone || '—' }}</td>
+          <td class="text-end">
+            <button cButton color="info" variant="ghost" size="sm" class="me-1"
+                    (click)="openEditForm(fournisseur)" aria-label="Modifier">
+              <svg cIcon name="cilPencil"></svg>
+            </button>
+            <button cButton color="danger" variant="ghost" size="sm"
+                    (click)="remove(fournisseur)" aria-label="Supprimer">
+              <svg cIcon name="cilTrash"></svg>
+            </button>
+          </td>
+        </tr>
+        }
+        </tbody>
+      </table>
+        }
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<c-modal [visible]="showModal()" (visibleChange)="!$event && closeForm()">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() !== null ? 'Modifier fournisseur' : 'Ajouter un fournisseur' }}</h5>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form">
+      <div class="mb-3">
+        <label cLabel for="nom">Nom *</label>
+        <input cFormControl id="nom" formControlName="nom" type="text" />
+      </div>
+      <div class="mb-3">
+        <label cLabel for="prenom">Prenom *</label>
+        <input cFormControl id="prenom" formControlName="prenom" type="text" />
+      </div>
+      <div class="mb-3">
+        <label cLabel for="telephone">Téléphone</label>
+        <input cFormControl id="telephone" formControlName="telephone" type="text" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button cButton color="secondary" (click)="closeForm()">Annuler</button>
+    <button cButton color="primary" (click)="save()">Enregistrer</button>
+  </c-modal-footer>
+</c-modal>
