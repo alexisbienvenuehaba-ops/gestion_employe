@@ -1,0 +1,255 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+
+
+      <c-card-header class="d-flex justify-content-between align-items-center">
+        <strong>Factures</strong>
+
+        <button cButton color="primary" (click)="openAddForm()">
+          <svg cIcon name="cilPlus" class="me-1"></svg>
+          Ajouter une facture
+        </button>
+      </c-card-header>
+
+      <c-card-body>
+
+        @if (factures().length === 0) {
+
+        <p class="text-body-secondary mb-0">
+          Aucune facture pour l'instant.
+          Clique sur "Ajouter une facture" pour commencer.
+        </p>
+
+        } @else {
+
+        <table cTable hover>
+
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>N° Facture</th>
+              <th>Client</th>
+              <th>Employé</th>
+              <th>Statut</th>
+              <th>Date</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (facture of factures(); track facture.idFacture) {
+
+        <tr>
+
+          <td>{{ facture.idFacture }}</td>
+
+          <td>{{ facture.numeroFacture }}</td>
+
+          <td>{{ facture.nomClient }}</td>
+
+          <td>{{ facture.nomEmploye }}</td>
+
+          <td>{{ facture.statut }}</td>
+
+          <td>{{ facture.dateFacture }}</td>
+
+          <td class="text-end">
+
+            <button
+              cButton
+              color="info"
+              variant="ghost"
+              size="sm"
+              class="me-1"
+              (click)="openEditForm(facture)"
+              aria-label="Modifier">
+              <svg cIcon name="cilPencil"></svg>
+            </button>
+
+            <button
+              cButton
+              color="danger"
+              variant="ghost"
+              size="sm"
+              (click)="remove(facture)"
+              aria-label="Supprimer">
+              <svg cIcon name="cilTrash"></svg>
+            </button>
+
+          </td>
+
+        </tr>
+
+        }
+
+        </tbody>
+
+      </table>
+
+        }
+
+      </c-card-body>
+
+    </c-card>
+
+
+  </c-col>
+</c-row>
+
+<c-modal
+  [visible]="showModal()"
+  (visibleChange)="!$event && closeForm()">
+
+  <c-modal-header>
+
+
+    <h5 cModalTitle>
+      {{ editingId() !== null ? 'Modifier une facture' : 'Ajouter une facture' }}
+    </h5>
+
+
+  </c-modal-header>
+
+  <c-modal-body>
+
+
+    <form [formGroup]="form">
+
+      <!-- CLIENT -->
+
+      <div class="mb-3">
+
+        <label cLabel for="id">
+          Client
+        </label>
+
+        <select
+          cFormControl
+          id="id"
+          formControlName="id">
+
+          <option [ngValue]="null">
+            Sélectionner un client
+          </option>
+
+          @for (client of clients(); track client.id) {
+
+          <option [ngValue]="client.id">
+          {{ client.nom }}
+          </option>
+
+          }
+
+        </select>
+
+      </div>
+
+
+      <!-- EMPLOYÉ -->
+
+      <div class="mb-3">
+
+        <label cLabel for="idEmploye">
+          Employé
+        </label>
+
+        <select
+          cFormControl
+          id="idEmploye"
+          formControlName="idEmploye">
+
+          <option [ngValue]="null">
+            Sélectionner un employé
+          </option>
+
+          @for (employe of employes(); track employe.idEmploye) {
+
+          <option [ngValue]="employe.idEmploye">
+          {{ employe.nom }} {{ employe.prenom }}
+          </option>
+
+          }
+
+        </select>
+
+      </div>
+
+
+      <!-- STATUT -->
+
+      <div class="mb-3">
+
+        <label cLabel for="statut">
+          Statut
+        </label>
+
+        <select
+          cFormControl
+          id="statut"
+          formControlName="statut">
+
+          <option [ngValue]="null">
+            Sélectionner un statut
+          </option>
+
+          <option value="EN_COURS">
+            En cours
+          </option>
+
+          <option value="EN_ATTENTE">
+            En attente
+          </option>
+
+          <option value="VALIDEE">
+            Validée
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- DATE -->
+
+      <div class="mb-3">
+
+        <label cLabel for="dateFacture">
+          Date de facture
+        </label>
+
+        <input
+          cFormControl
+          id="dateFacture"
+          formControlName="dateFacture"
+          type="date" />
+
+      </div>
+
+    </form>
+
+
+  </c-modal-body>
+
+  <c-modal-footer>
+
+
+    <button
+      cButton
+      color="secondary"
+      (click)="closeForm()">
+      Annuler
+    </button>
+
+    <button
+      cButton
+      color="primary"
+      (click)="save()">
+      Enregistrer
+    </button>
+
+
+  </c-modal-footer>
+
+</c-modal>

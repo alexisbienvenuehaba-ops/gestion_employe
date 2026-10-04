@@ -46,6 +46,20 @@ export const routes: Routes = [
         }
       },
       {
+        path: 'facture',
+        loadComponent: () => import('./feature/components/facture/facture.component').then(m => m.FactureComponent),
+        data: {
+          title: 'Facture'
+        }
+      },
+      {
+        path: 'ligne_facture',
+        loadComponent: () => import('./feature/components/ligne-facture/ligne-facture.component').then(m => m.LigneFactureComponent),
+        data: {
+          title: 'Ligne de facture'
+        }
+      },
+      {
         path: 'components',
         loadChildren: () => import('./views/components/routes').then((m) => m.routes)
       },

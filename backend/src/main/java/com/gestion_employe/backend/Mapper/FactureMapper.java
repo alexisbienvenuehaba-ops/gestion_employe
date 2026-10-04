@@ -44,14 +44,28 @@ public class FactureMapper {
     }
 
     public FactureResponseDto toResponse(FactureEntity entity) {
+
         return new FactureResponseDto(
                 entity.getIdFacture(),
+                entity.getNumeroFacture(),
                 entity.getStatut(),
                 entity.getDateFacture(),
-                entity.getClientEntity() != null ? entity.getClientEntity().getId() : null,
-                entity.getClientEntity() != null ? entity.getClientEntity().getNom() : null,
-                entity.getEmployeEntity() != null ? entity.getEmployeEntity().getIdEmploye() : null,
-                entity.getEmployeEntity() != null ? entity.getEmployeEntity().getNom() : null
+
+                entity.getClientEntity() != null
+                        ? entity.getClientEntity().getId()
+                        : null,
+
+                entity.getClientEntity() != null
+                        ? entity.getClientEntity().getNom()
+                        : null,
+
+                entity.getEmployeEntity() != null
+                        ? entity.getEmployeEntity().getIdEmploye()
+                        : null,
+
+                entity.getEmployeEntity() != null
+                        ? entity.getEmployeEntity().getNom()
+                        : null
         );
     }
 }

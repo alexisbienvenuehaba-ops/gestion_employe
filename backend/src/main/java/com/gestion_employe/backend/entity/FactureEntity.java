@@ -13,11 +13,17 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 public class FactureEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idFacture;
+
+    private String numeroFacture;
+
     private String statut;
+
     private LocalDate dateFacture;
+
     @ManyToOne
     @JoinColumn(name = "employe_id")
     private EmployeEntity employeEntity;
@@ -26,4 +32,5 @@ public class FactureEntity {
     @JoinColumn(name = "client_id")
     private ClientEntity clientEntity;
 
+    private boolean deleted = false;
 }

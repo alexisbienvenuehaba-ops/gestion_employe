@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class FactureResponseDto {
 
     private Long idFacture;
+    private String numeroFacture;
     private String statut;
     private LocalDate dateFacture;
 

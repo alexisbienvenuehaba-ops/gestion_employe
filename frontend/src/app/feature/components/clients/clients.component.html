@@ -22,7 +22,6 @@
               <th>Prenom</th>
               <th>Email</th>
               <th>Téléphone</th>
-              <th>Entreprise</th>
               <th class="text-end">Actions</th>
             </tr>
           </thead>
@@ -34,7 +33,6 @@
           <td>{{ client.prenom }}</td>
           <td>{{ client.email }}</td>
           <td>{{ client.telephone || '—' }}</td>
-          <td>{{ client.entreprise || '—' }}</td>
           <td class="text-end">
             <button cButton color="info" variant="ghost" size="sm" class="me-1"
                     (click)="openEditForm(client)" aria-label="Modifier">

@@ -1,0 +1,214 @@
+<c-row>
+  <c-col xs="12">
+    <c-card class="mb-4">
+
+
+      <c-card-header class="d-flex justify-content-between align-items-center">
+        <strong>Lignes de facture</strong>
+
+        <button cButton color="primary" (click)="openAddForm()">
+          <svg cIcon name="cilPlus" class="me-1"></svg>
+          Ajouter une ligne
+        </button>
+      </c-card-header>
+
+      <c-card-body>
+
+        @if (ligneFactures().length === 0) {
+
+        <p class="text-body-secondary mb-0">
+          Aucune ligne de facture pour l'instant.
+          Clique sur "Ajouter une ligne" pour commencer.
+        </p>
+
+        } @else {
+
+        <table cTable hover>
+
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>N° Facture</th>
+              <th>Client</th>
+              <th>Produit</th>
+              <th>Quantité</th>
+              <th>Prix unitaire</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (ligne of ligneFactures(); track ligne.idLigneFacture) {
+
+        <tr>
+
+          <td>{{ ligne.idLigneFacture }}</td>
+          <td>{{ ligne.numeroFacture }}</td>
+          <td>{{ ligne.nomClient }}</td>
+          <td>{{ ligne.nomProduit }}</td>
+          <td>{{ ligne.quantite }}</td>
+          <td>{{ ligne.prixUnitaire }}</td>
+
+          <td class="text-end">
+
+            <button
+              cButton
+              color="info"
+              variant="ghost"
+              size="sm"
+              class="me-1"
+              (click)="openEditForm(ligne)"
+              aria-label="Modifier">
+              <svg cIcon name="cilPencil"></svg>
+            </button>
+
+            <button
+              cButton
+              color="danger"
+              variant="ghost"
+              size="sm"
+              (click)="remove(ligne)"
+              aria-label="Supprimer">
+              <svg cIcon name="cilTrash"></svg>
+            </button>
+
+          </td>
+
+        </tr>
+
+        }
+
+        </tbody>
+
+      </table>
+
+        }
+
+      </c-card-body>
+
+    </c-card>
+
+
+  </c-col>
+</c-row>
+
+<c-modal
+  [visible]="showModal()"
+  (visibleChange)="!$event && closeForm()">
+
+  <c-modal-header>
+    <h5 cModalTitle>
+      {{ editingId() !== null ? 'Modifier une ligne de facture' : 'Ajouter une ligne de facture' }}
+    </h5>
+  </c-modal-header>
+
+  <c-modal-body>
+
+    <form [formGroup]="form">
+
+      <div class="mb-3">
+        <label cLabel for="idFacture">
+          N° Facture
+        </label>
+
+        <select
+          cFormControl
+          id="idFacture"
+          formControlName="idFacture">
+
+          <option [ngValue]="null">
+            Sélectionner une facture
+          </option>
+
+          @for (facture of factures(); track facture.idFacture) {
+
+          <option [ngValue]="facture.idFacture">
+          {{ facture.numeroFacture }}
+          </option>
+
+          }
+
+        </select>
+      </div>
+
+
+      <div class="mb-3">
+        <label cLabel for="idProduit">
+          Produit
+        </label>
+
+        <select
+          cFormControl
+          id="idProduit"
+          formControlName="idProduit">
+
+          <option [ngValue]="null">
+            Sélectionner un produit
+          </option>
+
+          @for (produit of produits(); track produit.idProduit) {
+
+          <option [ngValue]="produit.idProduit">
+          {{ produit.nom }}
+          </option>
+
+          }
+
+        </select>
+      </div>
+
+
+      <div class="mb-3">
+        <label cLabel for="quantite">
+          Quantité
+        </label>
+
+        <input
+          cFormControl
+          id="quantite"
+          formControlName="quantite"
+          type="number"
+          min="1"
+          placeholder="Quantité" />
+      </div>
+
+
+      <div class="mb-3">
+        <label cLabel for="prixUnitaire">
+          Prix unitaire
+        </label>
+
+        <input
+          cFormControl
+          id="prixUnitaire"
+          formControlName="prixUnitaire"
+          type="number"
+          min="0"
+          placeholder="Prix unitaire" />
+      </div>
+
+    </form>
+
+  </c-modal-body>
+
+  <c-modal-footer>
+
+
+    <button
+      cButton
+      color="secondary"
+      (click)="closeForm()">
+      Annuler
+    </button>
+
+    <button
+      cButton
+      color="primary"
+      (click)="save()">
+      Enregistrer
+    </button>
+
+  </c-modal-footer>
+
+</c-modal>

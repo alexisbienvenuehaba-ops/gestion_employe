@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface FactureService {
     List<FactureResponseDto> getAll();
-    FactureRequestDto getById(Long id);
+    FactureResponseDto getById(Long id);
     FactureResponseDto create(FactureRequestDto request);
     FactureResponseDto update(Long id, FactureRequestDto request);
     void delete(Long id);
