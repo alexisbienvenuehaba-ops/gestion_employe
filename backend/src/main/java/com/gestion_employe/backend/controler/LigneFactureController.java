@@ -1,8 +1,6 @@
 package com.gestion_employe.backend.controler;
 
-import com.gestion_employe.backend.dto.Request.FactureRequestDto;
 import com.gestion_employe.backend.dto.Request.LigneFactureRequestDto;
-import com.gestion_employe.backend.dto.Response.FactureResponseDto;
 import com.gestion_employe.backend.dto.Response.LigneFactureResponseDto;
 import com.gestion_employe.backend.service.LigneFactureService;
 import jakarta.validation.Valid;
@@ -14,10 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/ligne_facture")
-public class LigneFactureControler {
+public class LigneFactureController {
     private final LigneFactureService ligneFactureService;
 
-    public LigneFactureControler(LigneFactureService ligneFactureService) {
+    public LigneFactureController(LigneFactureService ligneFactureService) {
         this.ligneFactureService = ligneFactureService;
     }
     @GetMapping

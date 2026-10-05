@@ -1,8 +1,6 @@
 package com.gestion_employe.backend.controler;
 
-import com.gestion_employe.backend.dto.Request.EmployeRequestDto;
 import com.gestion_employe.backend.dto.Request.FournisseurRequestDto;
-import com.gestion_employe.backend.dto.Response.EmployeResponseDto;
 import com.gestion_employe.backend.dto.Response.FournisseurResponseDto;
 import com.gestion_employe.backend.service.FournisseurService;
 import jakarta.validation.Valid;
@@ -14,10 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/fournisseur")
-public class FournisseurControler {
+public class FournisseurController {
     private final FournisseurService fournisseurService;
 
-    public FournisseurControler(FournisseurService fournisseurService) {
+    public FournisseurController(FournisseurService fournisseurService) {
         this.fournisseurService = fournisseurService;
     }
     @GetMapping()

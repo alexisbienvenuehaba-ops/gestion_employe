@@ -41,6 +41,11 @@ export const navItems: INavData[] = [
     url: '/ligne_facture',
     iconComponent: { name: 'cil-people' }
   },
+  {
+    name: 'Achat',
+    url: '/achat',
+    iconComponent: { name: 'cil-people' }
+  },
 
   {
     title: true,

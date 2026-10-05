@@ -58,6 +58,15 @@ export const routes: Routes = [
         data: {
           title: 'Ligne de facture'
         }
+
+      },
+      {
+        path: 'achat',
+        loadComponent: () => import('./feature/components/achat/achat.component').then(m => m.AchatComponent),
+        data: {
+          title: 'Achat'
+        }
+
       },
       {
         path: 'components',

@@ -1,8 +1,6 @@
 package com.gestion_employe.backend.controler;
 
-import com.gestion_employe.backend.dto.Request.ClientRequestDto;
 import com.gestion_employe.backend.dto.Request.EmployeRequestDto;
-import com.gestion_employe.backend.dto.Response.ClientResponseDto;
 import com.gestion_employe.backend.dto.Response.EmployeResponseDto;
 import com.gestion_employe.backend.service.EmployeService;
 import jakarta.validation.Valid;
@@ -14,11 +12,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/employe")
-public class EmployeControler {
+public class EmployeController {
 
     private final EmployeService employeService;
 
-    public EmployeControler(EmployeService employeService) {
+    public EmployeController(EmployeService employeService) {
         this.employeService = employeService;
     }
     @GetMapping()

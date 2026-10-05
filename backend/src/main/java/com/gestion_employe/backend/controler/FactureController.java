@@ -12,10 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/facture")
-public class FactureControler {
+public class FactureController {
     private final FactureService factureService;
 
-    public FactureControler(FactureService factureService) {
+    public FactureController(FactureService factureService) {
         this.factureService = factureService;
     }
     @GetMapping
