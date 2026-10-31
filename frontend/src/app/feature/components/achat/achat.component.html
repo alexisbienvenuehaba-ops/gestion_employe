@@ -4,21 +4,30 @@
 
     <c-card class="mb-4">
 
-      <c-card-header>
+      <!-- ========================= -->
+      <!-- EN-TÊTE -->
+      <!-- ========================= -->
+
+      <c-card-header class="d-flex justify-content-between align-items-center">
 
         <strong>Achats</strong>
 
         <button
           cButton
           color="primary"
-          class="float-end"
           (click)="openAddForm()">
 
+          <svg cIcon name="cilPlus" class="me-1"></svg>
           Ajouter un achat
 
         </button>
 
       </c-card-header>
+
+
+      <!-- ========================= -->
+      <!-- LISTE DES ACHATS -->
+      <!-- ========================= -->
 
       <c-card-body>
 
@@ -39,7 +48,7 @@
             <th>Reste</th>
             <th>Paiement</th>
             <th>Statut</th>
-            <th>Actions</th>
+            <th class="text-end">Actions</th>
           </tr>
 
           </thead>
@@ -53,64 +62,52 @@
 
           <tr>
 
-            <td>
-          {{ achat.idAchat }}
-          </td>
+            <td>{{ achat.idAchat }}</td>
 
-          <td>
-          {{ achat.dateAchat }}
-          </td>
+                <td>{{ achat.dateAchat }}</td>
 
-          <td>
-          {{ achat.nomFournisseur }}
-          </td>
+                <td>{{ achat.nomFournisseur }}</td>
 
-          <td>
-          {{ achat.total }}
-          </td>
+                <td>{{ achat.total }}</td>
 
-          <td>
-          {{ achat.montantPaye }}
-          </td>
+                <td>{{ achat.montantPaye }}</td>
 
-          <td>
-          {{ achat.resteAPayer }}
-          </td>
+                <td>{{ achat.resteAPayer }}</td>
 
-          <td>
-          {{ achat.typePaiement }}
-          </td>
+                <td>{{ achat.typePaiement }}</td>
 
-          <td>
-          {{ achat.statut }}
-          </td>
+                <td>{{ achat.statut }}</td>
 
-          <td>
+                <td class="text-end">
 
-            <button
-              cButton
-              color="warning"
-              size="sm"
-              class="me-2"
-              (click)="openEditForm(achat)">
+                  <button
+                    cButton
+                    color="info"
+                    variant="ghost"
+                    size="sm"
+                    class="me-1"
+                    (click)="openEditForm(achat)"
+                    aria-label="Modifier">
 
-              Modifier
+                    <svg cIcon name="cilPencil"></svg>
 
-            </button>
+                  </button>
 
-            <button
-              cButton
-              color="danger"
-              size="sm"
-              (click)="remove(achat)">
+                  <button
+                    cButton
+                    color="danger"
+                    variant="ghost"
+                    size="sm"
+                    (click)="remove(achat)"
+                    aria-label="Supprimer">
 
-              Supprimer
+                    <svg cIcon name="cilTrash"></svg>
 
-            </button>
+                  </button>
 
-          </td>
+                </td>
 
-        </tr>
+              </tr>
 
           }
 
@@ -142,11 +139,18 @@
 </c-row>
 
 
-<!-- MODAL -->
+
+<!-- ====================================================== -->
+<!-- MODAL AJOUT / MODIFICATION -->
+<!-- ====================================================== -->
 
 <c-modal
   [visible]="showModal()"
   (visibleChange)="showModal.set($event)">
+
+  <!-- ========================= -->
+  <!-- HEADER -->
+  <!-- ========================= -->
 
   <c-modal-header>
 
@@ -163,21 +167,30 @@
   </c-modal-header>
 
 
+  <!-- ========================= -->
+  <!-- CORPS -->
+  <!-- ========================= -->
+
   <c-modal-body>
+
 
     <form [formGroup]="form">
 
+
+      <!-- ================================= -->
       <!-- FOURNISSEUR -->
+      <!-- ================================= -->
 
       <div class="mb-3">
 
-        <label cLabel>
+        <label cLabel class="required">
           Fournisseur
         </label>
 
         <select
           cFormControl
-          formControlName="idFournisseur">
+          formControlName="idFournisseur"
+          [class.is-invalid]="form.get('idFournisseur')?.invalid && form.get('idFournisseur')?.touched">
 
           <option [ngValue]="null">
             Sélectionner un fournisseur
@@ -202,36 +215,44 @@
       </div>
 
 
-      <!-- DATE -->
+
+      <!-- ================================= -->
+      <!-- DATE DE L'ACHAT -->
+      <!-- ================================= -->
 
       <div class="mb-3">
 
-        <label cLabel>
+        <label cLabel class="required">
           Date de l'achat
         </label>
 
         <input
           cFormControl
           type="date"
-          formControlName="dateAchat">
+          formControlName="dateAchat"
+          [class.is-invalid]="form.get('dateAchat')?.invalid && form.get('dateAchat')?.touched">
 
       </div>
 
 
-      <!-- TYPE PAIEMENT -->
+
+      <!-- ================================= -->
+      <!-- TYPE DE PAIEMENT -->
+      <!-- ================================= -->
 
       <div class="mb-3">
 
-        <label cLabel>
+        <label cLabel class="required">
           Type de paiement
         </label>
 
         <select
           cFormControl
-          formControlName="typePaiement">
+          formControlName="typePaiement"
+          [class.is-invalid]="form.get('typePaiement')?.invalid && form.get('typePaiement')?.touched">
 
           <option value="">
-            Sélectionner
+            Sélectionner un type de paiement
           </option>
 
           <option value="IMMEDIAT">
@@ -247,7 +268,10 @@
       </div>
 
 
-      <!-- ECHEANCE -->
+
+      <!-- ================================= -->
+      <!-- DATE D'ÉCHÉANCE (obligatoire à terme) -->
+      <!-- ================================= -->
 
       @if (
       form.get('typePaiement')?.value === 'A_TERME'
@@ -255,30 +279,36 @@
 
       <div class="mb-3">
 
-        <label cLabel>
+        <label cLabel class="required">
           Date d'échéance
         </label>
 
         <input
           cFormControl
           type="date"
-          formControlName="dateEcheance">
+          formControlName="dateEcheance"
+          [class.is-invalid]="tentativeEnregistrement() && !form.get('dateEcheance')?.value">
 
       </div>
 
       }
 
 
+
+      <!-- ================================= -->
       <!-- PRODUITS -->
+      <!-- ================================= -->
 
       <div class="mb-3">
 
-        <div
-          class="d-flex justify-content-between
-                 align-items-center mb-2">
 
-          <label cLabel>
-            Produits
+        <!-- TITRE + BOUTON -->
+
+        <div
+          class="d-flex justify-content-between align-items-center mb-3">
+
+          <label cLabel class="mb-0 required">
+            Produits de l'achat
           </label>
 
           <button
@@ -288,39 +318,53 @@
             type="button"
             (click)="addLigne()">
 
-            + Ajouter un produit
+            <svg cIcon name="cilPlus" class="me-1"></svg>
+            Ajouter un produit
 
           </button>
 
         </div>
 
 
+
+        <!-- ================================= -->
+        <!-- LIGNES D'ACHAT -->
+        <!-- ================================= -->
+
         @for (
         ligne of lignes();
         track $index
         ) {
 
-        <div class="achat-ligne mb-3">
+        <div class="achat-ligne mb-4 p-3 border rounded">
+
 
           <!-- PRODUIT -->
 
-          <select
-            cFormControl
-            [value]="ligne.idProduit"
-            (change)="updateLigne(
-              $index,
-              'idProduit',
-              $any($event.target).value
-            )">
+          <div class="mb-3">
 
-            <option value="">
-              Sélectionner un produit
-            </option>
+            <label cLabel class="required">
+              Produit
+            </label>
 
-            @for (
-              produit of produits();
-              track produit.idProduit
-            ) {
+            <select
+              cFormControl
+              [value]="ligne.idProduit"
+              [class.is-invalid]="tentativeEnregistrement() && !(ligne.idProduit > 0)"
+              (change)="updateLigne(
+                $index,
+                'idProduit',
+                $any($event.target).value
+              )">
+
+              <option value="">
+                Sélectionner un produit
+              </option>
+
+              @for (
+                produit of produits();
+                track produit.idProduit
+              ) {
 
         <option
           [value]="produit.idProduit">
@@ -333,64 +377,110 @@
 
         </select>
 
+      </div>
 
-        <!-- QUANTITE -->
+
+
+      <!-- QUANTITÉ -->
+
+      <div class="mb-3">
+
+        <label cLabel class="required">
+          Quantité
+        </label>
 
         <input
           cFormControl
           type="number"
           min="1"
-          class="mt-2"
-          placeholder="Quantité"
+          placeholder="Ex : 10"
           [value]="ligne.quantite"
+          [class.is-invalid]="tentativeEnregistrement() && !(ligne.quantite > 0)"
           (input)="updateLigne(
             $index,
             'quantite',
             $any($event.target).value
           )">
 
+      </div>
 
-        <!-- PRIX -->
+
+
+      <!-- PRIX UNITAIRE -->
+
+      <div class="mb-3">
+
+        <label cLabel class="required">
+          Prix unitaire
+        </label>
 
         <input
           cFormControl
           type="number"
-          min="0"
-          class="mt-2"
-          placeholder="Prix unitaire"
+          min="1"
+          placeholder="Ex : 50000"
           [value]="ligne.prixUnitaire"
+          [class.is-invalid]="tentativeEnregistrement() && !(ligne.prixUnitaire > 0)"
           (input)="updateLigne(
             $index,
             'prixUnitaire',
             $any($event.target).value
           )">
 
-
-        <button
-          cButton
-          color="danger"
-          size="sm"
-          class="mt-2"
-          type="button"
-          (click)="removeLigne($index)">
-
-          Supprimer
-
-        </button>
-
       </div>
+
+
+
+      <!-- SUPPRIMER LA LIGNE -->
+
+      <button
+        cButton
+        color="danger"
+        variant="ghost"
+        size="sm"
+        type="button"
+        (click)="removeLigne($index)">
+
+        <svg cIcon name="cilTrash" class="me-1"></svg>
+        Supprimer ce produit
+
+      </button>
+
+    </div>
+
+        }
+
+
+        <!-- ================================= -->
+        <!-- AUCUN PRODUIT -->
+        <!-- ================================= -->
+
+        @if (lignes().length === 0) {
+
+        <div
+          class="text-center p-3 border rounded"
+          [class.border-danger]="tentativeEnregistrement()"
+          [class.text-danger]="tentativeEnregistrement()"
+          [class.text-muted]="!tentativeEnregistrement()">
+
+          Aucun produit ajouté à cet achat.
+
+        </div>
 
         }
 
       </div>
 
 
-      <!-- TOTAL -->
 
-      <div class="achat-total">
+      <!-- ================================= -->
+      <!-- TOTAL -->
+      <!-- ================================= -->
+
+      <div class="achat-total mb-3">
 
         <strong>
-          Total :
+          Total de l'achat :
         </strong>
 
         {{ getTotal() }}
@@ -398,54 +488,48 @@
       </div>
 
 
-      <!-- MONTANT PAYE -->
 
-      <div class="mb-3 mt-3">
-
-        <label cLabel>
-          Montant payé
-        </label>
-
-        <input
-          cFormControl
-          type="number"
-          min="0"
-          formControlName="montantPaye">
-
-      </div>
+      <!-- ================================= -->
+      <!-- MONTANT PAYÉ -->
+      <!-- ================================= -->
 
 
-      <!-- RESTE -->
 
-      <div class="achat-reste">
 
-        <strong>
-          Reste à payer :
-        </strong>
 
-        {{ getResteAPayer() }}
+      <!-- ================================= -->
+      <!-- RESTE À PAYER -->
+      <!-- ================================= -->
 
-      </div>
+
 
     </form>
 
   </c-modal-body>
 
 
+
+  <!-- ========================= -->
+  <!-- FOOTER -->
+  <!-- ========================= -->
+
   <c-modal-footer>
 
     <button
       cButton
       color="secondary"
+      type="button"
       (click)="closeForm()">
 
       Annuler
 
     </button>
 
+
     <button
       cButton
       color="primary"
+      type="button"
       (click)="save()">
 
       {{
@@ -459,5 +543,3 @@
   </c-modal-footer>
 
 </c-modal>
-
-

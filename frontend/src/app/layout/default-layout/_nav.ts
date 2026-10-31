@@ -46,7 +46,11 @@ export const navItems: INavData[] = [
     url: '/achat',
     iconComponent: { name: 'cil-people' }
   },
-
+  {
+    name: 'Paiements fournisseur',
+    url: '/paiements-fournisseur',
+    iconComponent: { name: 'cil-people' }
+  },
   {
     title: true,
     name: ''

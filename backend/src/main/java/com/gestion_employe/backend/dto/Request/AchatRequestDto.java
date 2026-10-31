@@ -3,7 +3,6 @@ package com.gestion_employe.backend.dto.Request;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Data
@@ -19,6 +18,4 @@ public class AchatRequestDto {
     private String typePaiement;
 
     private LocalDate dateEcheance;
-
-    private BigDecimal montantPaye;
 }

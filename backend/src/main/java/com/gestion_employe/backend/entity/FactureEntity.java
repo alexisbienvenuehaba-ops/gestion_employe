@@ -1,6 +1,7 @@
 package com.gestion_employe.backend.entity;
 
 import jakarta.persistence.*;
+import com.gestion_employe.backend.Enum.StatutPaiementFacture;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,4 +34,7 @@ public class FactureEntity {
     private ClientEntity clientEntity;
 
     private boolean deleted = false;
+
+    @Enumerated(EnumType.STRING)
+    private StatutPaiementFacture statutPaiement = StatutPaiementFacture.NON_PAYEE;
 }

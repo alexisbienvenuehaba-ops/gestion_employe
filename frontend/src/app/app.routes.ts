@@ -69,6 +69,14 @@ export const routes: Routes = [
 
       },
       {
+        path: 'paiements-fournisseur',
+        loadComponent: () => import('./feature/components/paiement-fournisseur/paiement-fournisseur.component')
+          .then(m => m.PaiementsFournisseurComponent),
+        data: {
+          title: 'Paiements fournisseur'
+        }
+      },
+      {
         path: 'components',
         loadChildren: () => import('./views/components/routes').then((m) => m.routes)
       },

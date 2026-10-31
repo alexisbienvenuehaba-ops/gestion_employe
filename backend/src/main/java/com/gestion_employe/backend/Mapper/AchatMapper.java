@@ -5,14 +5,12 @@ import com.gestion_employe.backend.dto.Response.AchatResponseDto;
 import com.gestion_employe.backend.entity.AchatEntity;
 import com.gestion_employe.backend.entity.FournisseurEntity;
 import org.springframework.stereotype.Component;
+import java.math.BigDecimal;
 
 @Component
 public class AchatMapper {
 
-    public AchatEntity toEntity(
-            AchatRequestDto dto,
-            FournisseurEntity fournisseur
-    ) {
+    public AchatEntity toEntity(AchatRequestDto dto, FournisseurEntity fournisseur) {
         AchatEntity achat = new AchatEntity();
 
         achat.setDateAchat(dto.getDateAchat());
@@ -20,15 +18,9 @@ public class AchatMapper {
         achat.setTypePaiement(dto.getTypePaiement());
         achat.setDateEcheance(dto.getDateEcheance());
 
-        achat.setMontantPaye(
-                dto.getMontantPaye() != null
-                        ? dto.getMontantPaye()
-                        : java.math.BigDecimal.ZERO
-        );
-
-        achat.setTotal(java.math.BigDecimal.ZERO);
-        achat.setResteAPayer(java.math.BigDecimal.ZERO);
-
+        achat.setMontantPaye(BigDecimal.ZERO);
+        achat.setTotal(BigDecimal.ZERO);
+        achat.setResteAPayer(BigDecimal.ZERO);
         achat.setStatut("EN_COURS");
 
         return achat;

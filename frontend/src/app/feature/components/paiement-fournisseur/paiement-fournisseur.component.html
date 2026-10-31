@@ -1,0 +1,496 @@
+<c-row>
+
+  <c-col xs="12">
+
+    <c-card class="mb-4">
+
+      <c-card-header>
+        <strong>Paiements fournisseurs</strong>
+      </c-card-header>
+
+      <c-card-body>
+
+        <div class="d-flex justify-content-end mb-3">
+
+          <button
+            cButton
+            color="primary"
+            (click)="openAddForm()"
+          >
+            Ajouter un paiement
+          </button>
+
+        </div>
+
+
+        <div class="table-responsive">
+
+          <table
+            cTable
+            hover
+            striped
+            responsive
+          >
+
+            <thead>
+
+            <tr>
+
+              <th>ID</th>
+              <th>Achat</th>
+              <th>Date paiement</th>
+              <th>Montant</th>
+              <th>Mode de paiement</th>
+              <th>Référence</th>
+              <th>Statut</th>
+              <th>Actions</th>
+
+            </tr>
+
+            </thead>
+
+
+            <tbody>
+
+            @for (
+            paiement of paiements();
+            track paiement.idPaiementFournisseur
+            ) {
+
+            <tr>
+
+              <td>
+            {{ paiement.idPaiementFournisseur }}
+            </td>
+
+            <td>
+              Achat #{{ paiement.idAchat }}
+            </td>
+
+            <td>
+            {{ paiement.datePaiement }}
+            </td>
+
+            <td>
+            {{ paiement.montant | number:'1.0-2' }}
+            </td>
+
+            <td>
+            {{ paiement.modePaiement }}
+            </td>
+
+            <td>
+            {{ paiement.reference || '-' }}
+            </td>
+
+            <td>
+            {{ paiement.statut }}
+            </td>
+
+            <td>
+
+              @if (paiement.statut === 'BROUILLON') {
+
+            <button
+              cButton
+              color="success"
+              size="sm"
+              class="me-2"
+              (click)="valider(paiement)"
+            >
+              Valider
+            </button>
+
+            }
+
+
+            @if (
+              paiement.statut !== 'ANNULE' &&
+              paiement.statut !== 'BROUILLON'
+            ) {
+
+            <button
+              cButton
+              color="danger"
+              size="sm"
+              (click)="annuler(paiement)"
+            >
+              Annuler
+            </button>
+
+            }
+
+            </td>
+
+          </tr>
+
+            }
+
+
+            @empty {
+
+            <tr>
+
+              <td
+                colspan="8"
+                class="text-center"
+              >
+                Aucun paiement fournisseur trouvé.
+              </td>
+
+            </tr>
+
+            }
+
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </c-card-body>
+
+    </c-card>
+
+  </c-col>
+
+</c-row>
+
+
+<!-- Modal ajout paiement -->
+
+<c-modal
+  [visible]="showModal()"
+  (visibleChange)="showModal.set($event)"
+>
+
+  <c-modal-header>
+
+    <h5 cModalTitle>
+      Ajouter un paiement fournisseur
+    </h5>
+
+  </c-modal-header>
+
+
+  <c-modal-body>
+
+    <form [formGroup]="form">
+
+
+      <!-- Achat -->
+
+      <div class="mb-3">
+
+        <label
+          cLabel
+          for="idAchat"
+        >
+          Achat <span class="text-danger">*</span>
+        </label>
+
+        <select
+          cFormControl
+          id="idAchat"
+          formControlName="idAchat"
+          class="form-select"
+        >
+
+          <option [ngValue]="null">
+            -- Sélectionner un achat --
+          </option>
+
+          @for (
+          achat of achats();
+          track achat.idAchat
+          ) {
+
+          <option [ngValue]="achat.idAchat">
+
+            Achat #{{ achat.idAchat }}
+          -
+          {{ achat.nomFournisseur }}
+          -
+          {{ achat.total | number:'1.0-2' }}
+
+          </option>
+
+          }
+
+        </select>
+
+      </div>
+
+
+      <!-- Montant -->
+
+      <div class="mb-3">
+
+        <label
+          cLabel
+          for="montant"
+        >
+          Montant <span class="text-danger">*</span>
+        </label>
+
+        <input
+          cFormControl
+          id="montant"
+          type="number"
+          formControlName="montant"
+          min="1"
+        />
+
+      </div>
+
+
+      <!-- Mode de paiement -->
+
+      <div class="mb-3">
+
+        <label
+          cLabel
+          for="modePaiement"
+        >
+          Mode de paiement
+          <span class="text-danger">*</span>
+        </label>
+
+        <select
+          cFormControl
+          id="modePaiement"
+          formControlName="modePaiement"
+          class="form-select"
+        >
+
+          <option value="">
+            -- Sélectionner le mode de paiement --
+          </option>
+
+          <option value="ESPECES">
+            Espèces
+          </option>
+
+          <option value="MOBILE_MONEY">
+            Mobile Money
+          </option>
+
+          <option value="VIREMENT">
+            Virement
+          </option>
+
+          <option value="CHEQUE">
+            Chèque
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- Date paiement -->
+
+      <div class="mb-3">
+
+        <label
+          cLabel
+          for="datePaiement"
+        >
+          Date du paiement
+          <span class="text-danger">*</span>
+        </label>
+
+        <input
+          cFormControl
+          id="datePaiement"
+          type="date"
+          formControlName="datePaiement"
+        />
+
+      </div>
+
+
+      <!-- Référence -->
+
+      <div class="mb-3">
+
+        <label
+          cLabel
+          for="reference"
+        >
+          Référence
+        </label>
+
+        <input
+          cFormControl
+          id="reference"
+          type="text"
+          formControlName="reference"
+          placeholder="Référence du paiement"
+        />
+
+      </div>
+
+
+      <!-- Observation -->
+
+      <div class="mb-3">
+
+        <label
+          cLabel
+          for="observation"
+        >
+          Observation
+        </label>
+
+        <textarea
+          cFormControl
+          id="observation"
+          formControlName="observation"
+          rows="3"
+          placeholder="Observation"
+        ></textarea>
+
+      </div>
+
+    </form>
+
+  </c-modal-body>
+
+
+  <c-modal-footer>
+
+    <button
+      cButton
+      color="secondary"
+      type="button"
+      (click)="closeForm()"
+    >
+      Annuler
+    </button>
+
+    <button
+      cButton
+      color="primary"
+      type="button"
+      (click)="save()"
+    >
+      Enregistrer
+    </button>
+
+  </c-modal-footer>
+
+</c-modal>
+
+
+<!-- Modal validation paiement -->
+
+<c-modal
+  [visible]="showValidationModal()"
+  (visibleChange)="showValidationModal.set($event)"
+>
+
+  <c-modal-header>
+
+    <h5 cModalTitle>
+      Valider le paiement fournisseur
+    </h5>
+
+  </c-modal-header>
+
+
+  <c-modal-body>
+
+    @if (paiementAValider(); as paiement) {
+
+    <p>
+
+      Vous êtes sur le point de valider le paiement
+
+      <strong>
+        #{{ paiement.idPaiementFournisseur }}
+    </strong>
+
+    d'un montant de
+
+    <strong>
+    {{ paiement.montant | number:'1.0-2' }}
+    </strong>.
+
+  </p>
+
+    }
+
+
+    <form [formGroup]="formValidation">
+
+      <div class="mb-3">
+
+        <label
+          cLabel
+          for="idResponsable"
+        >
+          Responsable de la validation
+          <span class="text-danger">*</span>
+        </label>
+
+
+        <select
+          cFormControl
+          id="idResponsable"
+          formControlName="idResponsable"
+          class="form-select"
+        >
+
+          <option [ngValue]="null">
+            -- Sélectionner un employé --
+          </option>
+
+
+          @for (
+          employe of employes();
+          track employe.idEmploye
+          ) {
+
+          <option [ngValue]="employe.idEmploye">
+
+          {{ employe.nom }}
+          {{ employe.prenom }}
+
+          </option>
+
+          }
+
+        </select>
+
+      </div>
+
+    </form>
+
+  </c-modal-body>
+
+
+  <c-modal-footer>
+
+    <button
+      cButton
+      color="secondary"
+      type="button"
+      (click)="fermerValidation()"
+    >
+      Annuler
+    </button>
+
+
+    <button
+      cButton
+      color="success"
+      type="button"
+      (click)="confirmerValidation()"
+    >
+      Confirmer la validation
+    </button>
+
+  </c-modal-footer>
+
+</c-modal>

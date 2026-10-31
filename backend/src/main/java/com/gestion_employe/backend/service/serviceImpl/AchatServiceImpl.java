@@ -34,9 +34,7 @@ public class AchatServiceImpl implements AchatService {
                 achatMapper.toEntity(dto, fournisseur);
 
         achat.setTotal(BigDecimal.ZERO);
-        achat.setResteAPayer(
-                achat.getTotal().subtract(achat.getMontantPaye())
-        );
+        achat.setResteAPayer(BigDecimal.ZERO);
 
         AchatEntity saved =
                 achatRepository.save(achat);
@@ -61,18 +59,6 @@ public class AchatServiceImpl implements AchatService {
         achat.setFournisseurEntity(fournisseur);
         achat.setTypePaiement(dto.getTypePaiement());
         achat.setDateEcheance(dto.getDateEcheance());
-
-        achat.setMontantPaye(
-                dto.getMontantPaye() != null
-                        ? dto.getMontantPaye()
-                        : BigDecimal.ZERO
-        );
-
-        achat.setResteAPayer(
-                achat.getTotal().subtract(
-                        achat.getMontantPaye()
-                )
-        );
 
         AchatEntity updated =
                 achatRepository.save(achat);

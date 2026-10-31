@@ -19,9 +19,62 @@
       shortcut="meta+k,ctrl+k"
     />
     <c-header-nav class="d-none d-md-flex ms-auto">
-      <a cNavLink>
-        <svg cIcon class="my-1" name="cilBell" size="lg"></svg>
-      </a>
+      <c-dropdown
+        [popperOptions]="{ placement: 'bottom-end' }"
+        autoClose="outside"
+        variant="nav-item"
+      >
+        <button
+          [caret]="false"
+          aria-label="Notifications"
+          cDropdownToggle
+          class="position-relative"
+        >
+          <svg cIcon class="my-1" name="cilBell" size="lg"></svg>
+          @if (notificationService.nonLues() > 0) {
+          <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+          {{ notificationService.nonLues() }}
+          </span>
+          }
+        </button>
+        <div cDropdownMenu class="p-0" style="min-width: 380px; max-height: 440px; overflow-y: auto">
+          <h6
+            cDropdownHeader
+            class="bg-body-secondary text-body-secondary fw-semibold py-2 d-flex justify-content-between align-items-center"
+          >
+            <span>Notifications</span>
+            @if (notificationService.nonLues() > 0) {
+            <button
+              (click)="notificationService.marquerToutesCommeLues()"
+              class="btn btn-link btn-sm p-0"
+              type="button"
+            >
+              Tout marquer comme lu
+            </button>
+            }
+          </h6>
+          @for (n of notificationService.notifications(); track n.idNotification) {
+          <div class="px-3 py-2 border-bottom" [class.bg-body-tertiary]="n.statut === 'NON_LUE'">
+            <div class="fw-semibold" [class]="couleurNiveau(n.niveau)">{{ n.titre }}</div>
+              <div class="small">{{ n.message }}</div>
+              <div class="d-flex justify-content-between align-items-center mt-1">
+                <span class="small text-body-secondary">{{ n.dateCreation | date: 'dd/MM/yyyy HH:mm' }}</span>
+                @if (n.statut === 'NON_LUE') {
+          <button
+            (click)="notificationService.marquerCommeLue(n.idNotification)"
+            class="btn btn-link btn-sm p-0"
+            type="button"
+          >
+            Marquer comme lue
+          </button>
+          }
+          </div>
+        </div>
+          } @empty {
+          <div class="px-3 py-3 text-body-secondary">Aucune notification</div>
+          }
+        </div>
+      </c-dropdown>
       <a cNavLink>
         <svg cIcon class="my-1" name="cilList" size="lg"></svg>
       </a>

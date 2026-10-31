@@ -1,6 +1,6 @@
-
 import { Injectable, inject, signal } from '@angular/core'
 import { HttpClient } from '@angular/common/http'
+import { tap } from 'rxjs'
 import { achat } from '../../model/model/achat.model'
 
 @Injectable({
@@ -23,24 +23,23 @@ export class AchatService {
       })
   }
 
-  add(data: any): void {
-    this.http.post<achat>(this.apiUrl, data)
-      .subscribe({
-        next: (newAchat) => {
-          this.achats.update(achats => [
-            ...achats,
-            newAchat
-          ])
-        }
+  add(data: any) {
+    return this.http.post<achat>(this.apiUrl, data).pipe(
+      tap((newAchat) => {
+        this.achats.update(achats => [
+          ...achats,
+          newAchat
+        ])
       })
+    )
   }
 
-  update(id: number, data: any): void {
-    this.http.put<achat>(
+  update(id: number, data: any) {
+    return this.http.put<achat>(
       `${this.apiUrl}/${id}`,
       data
-    ).subscribe({
-      next: (updatedAchat) => {
+    ).pipe(
+      tap((updatedAchat) => {
         this.achats.update(achats =>
           achats.map(a =>
             a.idAchat === id
@@ -48,8 +47,8 @@ export class AchatService {
               : a
           )
         )
-      }
-    })
+      })
+    )
   }
 
   delete(id: number): void {
@@ -66,4 +65,3 @@ export class AchatService {
     })
   }
 }
-

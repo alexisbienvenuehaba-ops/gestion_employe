@@ -22,6 +22,8 @@ import {
   TableDirective
 } from '@coreui/angular';
 
+import { IconDirective } from '@coreui/icons-angular';
+
 import { LigneFactureService } from '../../service/services/ligne-facture.service';
 import { FactureService } from '../../service/services/facture.service';
 import { ProduitService } from '../../service/services/produit.service';
@@ -40,6 +42,7 @@ import { ligneFacture } from '../../model/model/ligneFactureModel';
     ColComponent,
     FormControlDirective,
     FormLabelDirective,
+    IconDirective,
     ModalBodyComponent,
     ModalComponent,
     ModalFooterComponent,

@@ -1,0 +1,11 @@
+package com.gestion_employe.backend.Enum;
+
+public enum TypeAction {
+    RECEPTION_VALIDEE,
+    REFUS_DECIDE,
+    CORRECTION_STOCK,
+    PAIEMENT_CLIENT_VALIDE,
+    PAIEMENT_CLIENT_ANNULE,
+    PAIEMENT_FOURNISSEUR_VALIDE,
+    PAIEMENT_FOURNISSEUR_ANNULE
+}

@@ -25,8 +25,13 @@ import {
 import { AchatService } from '../../service/services/achat.service';
 import { FournisseurService } from '../../service/services/fournisseur.service';
 import { ProduitService } from '../../service/services/produit.service';
+import { LigneAchatService } from '../../service/services/ligne-achat.service';
 
+import { IconDirective } from '@coreui/icons-angular';
 import { achat } from '../../model/model/achat.model';
+
+import { from } from 'rxjs';
+import { concatMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-achat',
@@ -40,6 +45,7 @@ import { achat } from '../../model/model/achat.model';
     ColComponent,
     FormControlDirective,
     FormLabelDirective,
+    IconDirective,
     ModalBodyComponent,
     ModalComponent,
     ModalFooterComponent,
@@ -58,6 +64,7 @@ export class AchatComponent {
   private readonly achatService: AchatService;
   private readonly fournisseurService: FournisseurService;
   private readonly produitService: ProduitService;
+  private readonly ligneAchatService: LigneAchatService;
 
   readonly achats = computed(() =>
     this.achatService.achats()
@@ -77,8 +84,26 @@ export class AchatComponent {
 
   readonly lignes = signal<any[]>([]);
 
-  readonly form = this.fb.group({
+  /**
+   * Vrai quand il y a au moins une ligne et que chaque ligne
+   * a un produit, une quantité et un prix supérieurs à 0.
+   */
+  readonly lignesValides = computed(() =>
+    this.lignes().length > 0 &&
+    this.lignes().every(ligne =>
+      Number(ligne.idProduit) > 0 &&
+      Number(ligne.quantite) > 0 &&
+      Number(ligne.prixUnitaire) > 0
+    )
+  );
 
+  /**
+   * Passe à vrai quand on clique sur Enregistrer :
+   * fait apparaître en rouge les champs manquants.
+   */
+  readonly tentativeEnregistrement = signal(false);
+
+  readonly form = this.fb.group({
     dateAchat: [
       '',
       Validators.required
@@ -96,28 +121,25 @@ export class AchatComponent {
 
     dateEcheance: [
       null as string | null
-    ],
-
-    montantPaye: [
-      0,
-      [
-        Validators.required,
-        Validators.min(0)
-      ]
     ]
   });
 
   constructor(
     achatService: AchatService,
     fournisseurService: FournisseurService,
-    produitService: ProduitService
+    produitService: ProduitService,
+    ligneAchatService: LigneAchatService
   ) {
     this.achatService = achatService;
     this.fournisseurService = fournisseurService;
     this.produitService = produitService;
+    this.ligneAchatService = ligneAchatService;
+
+    this.achatService.getAll();
   }
 
   openAddForm(): void {
+    this.tentativeEnregistrement.set(false);
 
     this.editingId.set(null);
 
@@ -125,8 +147,7 @@ export class AchatComponent {
       dateAchat: '',
       idFournisseur: null,
       typePaiement: '',
-      dateEcheance: null,
-      montantPaye: 0
+      dateEcheance: null
     });
 
     this.lignes.set([]);
@@ -135,6 +156,7 @@ export class AchatComponent {
   }
 
   openEditForm(achat: achat): void {
+    this.tentativeEnregistrement.set(false);
 
     this.editingId.set(achat.idAchat);
 
@@ -142,9 +164,12 @@ export class AchatComponent {
       dateAchat: achat.dateAchat,
       idFournisseur: achat.idFournisseur,
       typePaiement: achat.typePaiement,
-      dateEcheance: achat.dateEcheance,
-      montantPaye: achat.montantPaye
+      dateEcheance: achat.dateEcheance
     });
+
+    // Les lignes ne sont pas rechargées à la modification :
+    // on vide celles d'un formulaire précédent.
+    this.lignes.set([]);
 
     this.showModal.set(true);
   }
@@ -154,7 +179,6 @@ export class AchatComponent {
   }
 
   addLigne(): void {
-
     this.lignes.update(lignes => [
       ...lignes,
       {
@@ -166,7 +190,6 @@ export class AchatComponent {
   }
 
   removeLigne(index: number): void {
-
     this.lignes.update(lignes =>
       lignes.filter((_, i) => i !== index)
     );
@@ -177,9 +200,7 @@ export class AchatComponent {
     field: string,
     value: any
   ): void {
-
     this.lignes.update(lignes => {
-
       const updated = [...lignes];
 
       updated[index] = {
@@ -192,7 +213,6 @@ export class AchatComponent {
   }
 
   getTotal(): number {
-
     return this.lignes().reduce(
       (total, ligne) =>
         total +
@@ -204,90 +224,171 @@ export class AchatComponent {
     );
   }
 
-  getResteAPayer(): number {
-
-    const montantPaye =
-      Number(
-        this.form.get('montantPaye')?.value
-      ) || 0;
-
-    return Math.max(
-      this.getTotal() - montantPaye,
-      0
-    );
-  }
-
   save(): void {
 
+    this.tentativeEnregistrement.set(true);
+
     if (this.form.invalid) {
-
       this.form.markAllAsTouched();
-
       return;
     }
 
-    if (this.lignes().length === 0) {
+    const value = this.form.getRawValue();
 
+    if (value.typePaiement === 'A_TERME' && !value.dateEcheance) {
       alert(
-        'Ajoutez au moins un produit à l’achat.'
+        'La date d’échéance est obligatoire pour un paiement à terme.'
       );
-
       return;
     }
-
-    const value =
-      this.form.getRawValue();
 
     const payload = {
-
       dateAchat: value.dateAchat!,
-
-      idFournisseur:
-        value.idFournisseur!,
-
-      typePaiement:
-        value.typePaiement!,
-
+      idFournisseur: value.idFournisseur!,
+      typePaiement: value.typePaiement!,
       dateEcheance:
         value.typePaiement === 'A_TERME'
           ? value.dateEcheance
-          : null,
-
-      montantPaye:
-        Number(value.montantPaye) || 0
+          : null
     };
 
     const id = this.editingId();
 
+    // =========================
+    // MODIFICATION
+    // =========================
     if (id !== null) {
 
       this.achatService.update(
         id,
         payload
-      );
+      ).subscribe({
+        next: () => {
 
-    } else {
+          this.achatService.getAll();
+          this.closeForm();
 
-      this.achatService.add(
-        payload
-      );
+        },
+
+        error: (error) => {
+
+          console.error(
+            'Erreur modification achat :',
+            error
+          );
+
+          alert(
+            'Erreur lors de la modification de l’achat.'
+          );
+        }
+      });
+
+      return;
     }
 
-    this.closeForm();
+    // =========================
+    // CRÉATION : les lignes sont vérifiées AVANT de créer l'achat
+    // =========================
+    if (!this.lignesValides()) {
+      alert(
+        'Ajoutez au moins un produit, et chaque ligne doit avoir un produit, une quantité et un prix supérieurs à 0.'
+      );
+      return;
+    }
+
+    // =========================
+    // AJOUT DE L'ACHAT
+    // =========================
+    this.achatService.add(
+      payload
+    ).subscribe({
+
+      next: (newAchat) => {
+
+        console.log(
+          'ACHAT CRÉÉ :',
+          newAchat
+        );
+
+        // =========================
+        // AJOUT DES LIGNES
+        // =========================
+        from(this.lignes())
+          .pipe(
+            concatMap(ligne =>
+              this.ligneAchatService.add({
+                quantite: Number(ligne.quantite),
+                prixUnitaire: Number(ligne.prixUnitaire),
+                idAchat: newAchat.idAchat,
+                idProduit: Number(ligne.idProduit)
+              })
+            )
+          )
+          .subscribe({
+
+            next: (ligne) => {
+              console.log(
+                'LIGNE ACHAT CRÉÉE :',
+                ligne
+              );
+            },
+
+            complete: () => {
+
+              console.log(
+                'Toutes les lignes ont été enregistrées.'
+              );
+
+              this.achatService.getAll();
+              this.closeForm();
+
+            },
+
+            error: (error) => {
+
+              console.error(
+                'Erreur création ligne achat :',
+                error
+              );
+
+              alert(
+                'L’achat a été créé, mais une erreur est survenue lors de l’enregistrement des lignes.'
+              );
+
+              this.achatService.getAll();
+            }
+
+          });
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Erreur création achat :',
+          error
+        );
+
+        alert(
+          'Erreur lors de la création de l’achat.'
+        );
+      }
+
+    });
   }
 
   remove(achat: achat): void {
 
-    const confirmed = confirm(
-      'Supprimer cet achat ?'
-    );
+    const confirmed =
+      confirm(
+        'Supprimer cet achat ?'
+      );
 
     if (confirmed) {
 
       this.achatService.delete(
         achat.idAchat
       );
+
     }
   }
 }
-
